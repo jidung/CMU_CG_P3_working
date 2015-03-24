@@ -72,11 +72,14 @@ public:
 
     // added by m.ji
     virtual bool intersect(const Ray& r, real_t& t) = 0;
-    virtual Vector3 computeNormal(const Vector3& pos) = 0;
+    virtual Vector3 getNormal(const Vector3& hitPos) = 0;
     virtual Color3 getSpecular() = 0;   
     virtual real_t getRefractionIdx() = 0;   
-    virtual Color3 computeColor(const Vector3& pos) = 0;
-    
+    virtual Color3 getAmbient() = 0;
+    virtual Color3 getDiffuse() = 0;
+    virtual Color3 getTexColor() = 0;
+   
+    Vector3 normal; // exclusively for sphere texture coordinate calculation
 };
 
 

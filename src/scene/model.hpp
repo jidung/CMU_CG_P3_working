@@ -32,10 +32,13 @@ public:
     virtual bool initialize();
 
     bool intersect(const Ray& r, real_t& t); // overrided from Geometry. m.ji
-    Vector3 computeNormal(const Vector3& pos);  // overrided from Geometry. added by m.ji   
-    Color3 getSpecular();  // overrided from Geometry. m.ji 
-    real_t getRefractionIdx();  // overrided from Geometry. added by m.ji   
-    Color3 computeColor(const Vector3& pos);
+    Vector3 getNormal(const Vector3& hitPos);  // these are overrided from Geometry class. m.ji   
+    Color3 getSpecular();     
+    real_t getRefractionIdx();    
+    Color3 getAmbient();
+    Color3 getDiffuse();
+    Color3 getTexColor();
+    
     float u, v, w; // for barycentric coord calculation
     MeshTriangle hitTriangle;
 };

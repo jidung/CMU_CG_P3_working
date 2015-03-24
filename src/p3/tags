@@ -1,0 +1,116 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+BUFFER_SIZE	main.cpp	30;"	d	file:
+CHUNK_SIZE	raytracer.cpp	/^static const unsigned CHUNK_SIZE = 1;$/;"	m	namespace:_462	file:
+DEFAULT_HEIGHT	main.cpp	28;"	d	file:
+DEFAULT_WIDTH	main.cpp	27;"	d	file:
+DIRECT_SAMPLE_COUNT	util.hpp	35;"	d
+KEY_RAYTRACE	main.cpp	33;"	d	file:
+KEY_SCREENSHOT	main.cpp	35;"	d	file:
+KEY_SEND_PHOTONS	main.cpp	37;"	d	file:
+LightConstants	main.cpp	/^static const GLenum LightConstants[] = {$/;"	m	namespace:_462	file:
+MAX_DEPTH	util.hpp	18;"	d
+MAX_PHOTON_DEPTH	util.hpp	24;"	d
+MAX_SAMPLE_DISTANCE	neighbor.hpp	16;"	d
+MAX_THREADS	util.hpp	15;"	d
+NUM_GL_LIGHTS	main.cpp	/^static const size_t NUM_GL_LIGHTS = 8;$/;"	m	namespace:_462	file:
+Options	main.cpp	/^struct Options$/;"	s	namespace:_462	file:
+PHOTON_COUNT	util.hpp	27;"	d
+PHOTON_SAMPLE_COUNT	util.hpp	30;"	d
+Photon	photon.hpp	/^class Photon{$/;"	c	namespace:_462
+PhotonAxis	photon.hpp	/^    PhotonAxis(Axis a):axis(a){}$/;"	f	class:_462::PhotonAxis
+PhotonAxis	photon.hpp	/^class PhotonAxis{$/;"	c	namespace:_462
+PhotonMap	photonmap.cpp	/^PhotonMap::PhotonMap(){$/;"	f	class:_462::PhotonMap
+PhotonMap	photonmap.hpp	/^class PhotonMap{$/;"	c	namespace:_462
+Raytracer	raytracer.cpp	/^Raytracer::Raytracer() {$/;"	f	class:_462::Raytracer
+Raytracer	raytracer.hpp	/^class Raytracer$/;"	c	namespace:_462
+RaytracerApplication	main.cpp	/^    RaytracerApplication( const Options& opt )$/;"	f	class:_462::RaytracerApplication
+RaytracerApplication	main.cpp	/^class RaytracerApplication : public Application$/;"	c	namespace:_462	file:
+STEP_SIZE	raytracer.cpp	/^static const unsigned STEP_SIZE = 1;$/;"	m	namespace:_462	file:
+WATT_BOOST	util.hpp	21;"	d
+_462	main.cpp	/^namespace _462 {$/;"	n	file:
+_462	neighbor.cpp	/^namespace _462{$/;"	n	file:
+_462	neighbor.hpp	/^namespace _462{$/;"	n
+_462	photon.cpp	/^namespace _462{$/;"	n	file:
+_462	photon.hpp	/^namespace _462{$/;"	n
+_462	photonmap.cpp	/^namespace _462 {$/;"	n	file:
+_462	photonmap.hpp	/^namespace _462 {$/;"	n
+_462	randomgeo.cpp	/^namespace _462{$/;"	n	file:
+_462	randomgeo.hpp	/^namespace _462 {$/;"	n
+_462	raytracer.cpp	/^namespace _462 {$/;"	n	file:
+_462	raytracer.hpp	/^namespace _462 {$/;"	n
+_462	util.cpp	/^namespace _462{$/;"	n	file:
+_462	util.hpp	/^namespace _462 {$/;"	n
+_462_CASTER_HPP_	util.hpp	2;"	d
+_462_PHOTONMAP_HPP_	photonmap.hpp	2;"	d
+_462_RANDOMGEO_HPP_	randomgeo.hpp	2;"	d
+_462_RAYTRACER_HPP_	raytracer.hpp	12;"	d
+__Photon_Mapper__neighbor__	neighbor.hpp	10;"	d
+__Photon_Mapper__photon__	photon.hpp	10;"	d
+all_raw_photons	photonmap.hpp	/^    std::vector<Photon> *all_raw_photons;$/;"	m	class:_462::PhotonMap
+axis	photon.hpp	/^    Axis axis;$/;"	m	class:_462::PhotonAxis
+buf_height	main.cpp	/^    int buf_width, buf_height;$/;"	m	class:_462::RaytracerApplication	file:
+buf_width	main.cpp	/^    int buf_width, buf_height;$/;"	m	class:_462::RaytracerApplication	file:
+buffer	main.cpp	/^    unsigned char* buffer;$/;"	m	class:_462::RaytracerApplication	file:
+camera_control	main.cpp	/^    CameraRoamControl camera_control;$/;"	m	class:_462::RaytracerApplication	file:
+color	photon.cpp	/^Color3 Photon::color(){$/;"	f	class:_462::Photon
+current_row	raytracer.hpp	/^    size_t current_row;$/;"	m	class:_462::Raytracer
+destroy	main.cpp	/^void RaytracerApplication::destroy()$/;"	f	class:_462::RaytracerApplication
+geometry_array	photonmap.hpp	/^    GLuint geometry_array;$/;"	m	class:_462::PhotonMap
+geometry_array_size	photonmap.hpp	/^    size_t geometry_array_size;$/;"	m	class:_462::PhotonMap
+globalBounds	photon.cpp	/^Bound globalBounds;$/;"	m	namespace:_462	file:
+handle_event	main.cpp	/^void RaytracerApplication::handle_event( const SDL_Event& event )$/;"	f	class:_462::RaytracerApplication
+height	main.cpp	/^    int width, height;$/;"	m	struct:_462::Options	file:
+height	raytracer.hpp	/^    size_t width, height;$/;"	m	class:_462::Raytracer
+initialize	main.cpp	/^bool RaytracerApplication::initialize()$/;"	f	class:_462::RaytracerApplication
+initialize	photonmap.cpp	/^void PhotonMap::initialize(Scene *scene){$/;"	f	class:_462::PhotonMap
+initialize	raytracer.cpp	/^bool Raytracer::initialize(Scene* scene, size_t num_samples,$/;"	f	class:_462::Raytracer
+input_filename	main.cpp	/^    const char* input_filename;$/;"	m	struct:_462::Options	file:
+main	main.cpp	/^int main( int argc, char* argv[] )$/;"	f
+makeTree	photon.cpp	/^void makeTree($/;"	f	namespace:_462
+montecarlo	util.cpp	/^real_t montecarlo(Color3& light){$/;"	f	namespace:_462
+normal	photon.cpp	/^Vector3 Photon::normal(){$/;"	f	class:_462::Photon
+num_samples	main.cpp	/^    int num_samples;$/;"	m	struct:_462::Options	file:
+num_samples	raytracer.hpp	/^    unsigned int num_samples;$/;"	m	class:_462::Raytracer
+open_window	main.cpp	/^    bool open_window;$/;"	m	struct:_462::Options	file:
+operator ()	photon.cpp	/^bool PhotonAxis::operator() (Photon &i,Photon &j) {$/;"	f	class:_462::PhotonAxis
+options	main.cpp	/^    Options options;$/;"	m	class:_462::RaytracerApplication	file:
+organizePhotons	photonmap.cpp	/^void organizePhotons(){$/;"	f	namespace:_462
+output_filename	main.cpp	/^    const char* output_filename;$/;"	m	struct:_462::Options	file:
+output_image	main.cpp	/^void RaytracerApplication::output_image()$/;"	f	class:_462::RaytracerApplication
+parse_args	main.cpp	/^static bool parse_args( Options* opt, int argc, char* argv[] )$/;"	f	file:
+photonMap	raytracer.hpp	/^    PhotonMap photonMap;$/;"	m	class:_462::Raytracer
+position	photon.cpp	/^Vector3 Photon::position(){$/;"	f	class:_462::Photon
+print_usage	main.cpp	/^static void print_usage( const char* progname )$/;"	f	file:
+projector	raytracer.hpp	/^    Projector projector;$/;"	m	class:_462::Raytracer
+queue_render_photon	main.cpp	/^    bool queue_render_photon;$/;"	m	class:_462::RaytracerApplication	file:
+random_hemisphere	randomgeo.cpp	/^Vector3 random_hemisphere(Vector3 d){$/;"	f	namespace:_462
+random_hemisphere_indexed	randomgeo.cpp	/^Vector3 random_hemisphere_indexed(real_t k,real_t n){$/;"	f	namespace:_462
+random_sphere	randomgeo.cpp	/^Vector3 random_sphere(){$/;"	f	namespace:_462
+random_sphere_indexed	randomgeo.cpp	/^Vector3 random_sphere_indexed(int k,int n){$/;"	f	namespace:_462
+raytrace	raytracer.cpp	/^bool Raytracer::raytrace(unsigned char* buffer, real_t* max_time)$/;"	f	class:_462::Raytracer
+raytrace_finished	main.cpp	/^    bool raytrace_finished;$/;"	m	class:_462::RaytracerApplication	file:
+raytracer	main.cpp	/^    Raytracer raytracer;$/;"	m	class:_462::RaytracerApplication	file:
+raytracing	main.cpp	/^    bool raytracing;$/;"	m	class:_462::RaytracerApplication	file:
+render	main.cpp	/^void RaytracerApplication::render()$/;"	f	class:_462::RaytracerApplication
+render_photons	photonmap.cpp	/^void PhotonMap::render_photons(){$/;"	f	class:_462::PhotonMap
+render_scene	main.cpp	/^void RaytracerApplication::render_scene(const Scene& scene)$/;"	f	class:_462::RaytracerApplication
+scene	main.cpp	/^    Scene scene;$/;"	m	class:_462::RaytracerApplication	file:
+scene	photonmap.hpp	/^    Scene *scene;$/;"	m	class:_462::PhotonMap
+scene	raytracer.hpp	/^    Scene* scene;$/;"	m	class:_462::Raytracer
+send_photons	photonmap.cpp	/^void PhotonMap::send_photons(){$/;"	f	class:_462::PhotonMap
+shift_buffer	photonmap.cpp	/^void shift_buffer(std::vector<Photon> *source,std::vector<Photon>::iterator &dest,size_t count){$/;"	f	namespace:_462
+toggle_raytracing	main.cpp	/^void RaytracerApplication::toggle_raytracing( int width, int height )$/;"	f	class:_462::RaytracerApplication
+trace_photon	photonmap.cpp	/^void PhotonMap::trace_photon(std::vector<Photon> &result,Color3 color,Ray ray,int depth){$/;"	f	class:_462::PhotonMap
+trace_pixel	raytracer.cpp	/^Color3 Raytracer::trace_pixel(size_t x,$/;"	f	class:_462::Raytracer
+trace_ray	raytracer.cpp	/^Color3 Raytracer::trace_ray(Ray &ray\/*maybe some more arguments*\/){$/;"	f	class:_462::Raytracer
+update	main.cpp	/^void RaytracerApplication::update( real_t delta_time )$/;"	f	class:_462::RaytracerApplication
+update_photons	photonmap.cpp	/^void PhotonMap::update_photons(){$/;"	f	class:_462::PhotonMap
+width	main.cpp	/^    int width, height;$/;"	m	struct:_462::Options	file:
+width	raytracer.hpp	/^    size_t width, height;$/;"	m	class:_462::Raytracer
+~Raytracer	raytracer.cpp	/^Raytracer::~Raytracer() { }$/;"	f	class:_462::Raytracer
+~RaytracerApplication	main.cpp	/^    virtual ~RaytracerApplication() { free( buffer ); }$/;"	f	class:_462::RaytracerApplication

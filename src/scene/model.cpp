@@ -123,18 +123,14 @@ bool Model::intersect(const Ray& r, real_t& t_out) {
         return false;
 }
 
-Vector3 Model::computeNormal (const Vector3& pos) {
-    
+// hitPos is not used but there for sphere normal calculation
+Vector3 Model::getNormal (const Vector3& hitPos) {
     const MeshVertex* vertices = mesh->get_vertices(); 
-   
-//    std::cout << "u: " << u << "v: " << v << "w: " << w << std::endl;
     Vector3 normal = vertices[hitTriangle.vertices[0]].normal * u +
-            vertices[hitTriangle.vertices[1]].normal * v +
-            vertices[hitTriangle.vertices[2]].normal * w;
-
-    //return normal;
+                     vertices[hitTriangle.vertices[1]].normal * v +
+                     vertices[hitTriangle.vertices[2]].normal * w;
+    //return normalize(normMat * normal); already normalized?
     return normMat * normal;
-    //return normalize(normMat * normal);
 }
 
 Color3 Model::getSpecular () {
@@ -145,19 +141,22 @@ real_t Model::getRefractionIdx () {
     return material->refractive_index;
 }
 
-Color3 Model::computeColor(const Vector3& pos) {
+Color3 Model::getAmbient() {
+    return material->ambient;
+}
+
+Color3 Model::getDiffuse() {
+    return material->diffuse;
+}
+
+Color3 Model::getTexColor() {
     const MeshVertex* vertices = mesh->get_vertices(); 
     Vector2 tex_coord_ = vertices[hitTriangle.vertices[0]].tex_coord * u +
                          vertices[hitTriangle.vertices[1]].tex_coord * v +
                          vertices[hitTriangle.vertices[2]].tex_coord * w;
              
-    //std::cout << normalize(tex_coord_) << std::endl;
-
     //tex_coord_ = normalize(tex_coord_);
-    // suspicious code
-
-    Color3 texColor = material->texture.sample (tex_coord_);    
-    return texColor * (material->ambient + material->diffuse);
+    return material->texture.sample (tex_coord_);    
 }
 
 } /* _462 */

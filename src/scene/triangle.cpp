@@ -136,7 +136,8 @@ bool Triangle::intersect(const Ray& r, real_t& t_out) {
     return true;
 }
 
-Vector3 Triangle::computeNormal (const Vector3& pos) {
+// hitPos is not used but there for sphere's getNormal
+Vector3 Triangle::getNormal (const Vector3& hitPos) {
 
     Vector3 normal = vertices[0].normal * u +
             vertices[1].normal * v +
@@ -146,44 +147,35 @@ Vector3 Triangle::computeNormal (const Vector3& pos) {
 }
 
 Color3 Triangle::getSpecular () {
-    Color3 specular_ = vertices[0].material->specular * u +
-                      vertices[1].material->specular * v +
-                      vertices[2].material->specular * w;
-    return specular_;
+    return vertices[0].material->specular * u +
+           vertices[1].material->specular * v +
+           vertices[2].material->specular * w;
 }
     
 real_t Triangle::getRefractionIdx () {
-
-    real_t refIdx_ =  vertices[0].material->refractive_index * u +
-                      vertices[1].material->refractive_index * v +
-                      vertices[2].material->refractive_index * w;
-
-    return refIdx_; 
+    return vertices[0].material->refractive_index * u +
+           vertices[1].material->refractive_index * v +
+           vertices[2].material->refractive_index * w;
 }
-Color3 Triangle::computeColor(const Vector3& pos) {
-   
-    Color3 ambient_ = vertices[0].material->ambient * u +
-                      vertices[1].material->ambient * v +
-                      vertices[2].material->ambient * w;
 
-    Color3 diffuse_ = vertices[0].material->diffuse * u +
-                      vertices[1].material->diffuse * v +
-                      vertices[2].material->diffuse * w;
+Color3 Triangle::getAmbient() {
+    return  vertices[0].material->ambient * u +
+            vertices[1].material->ambient * v +
+            vertices[2].material->ambient * w;
+}
 
+Color3 Triangle::getDiffuse() {
+    return vertices[0].material->diffuse * u +
+           vertices[1].material->diffuse * v +
+           vertices[2].material->diffuse * w;
+}
+
+Color3 Triangle::getTexColor() {
     Vector2 tex_coord_ = vertices[0].tex_coord * u +
                          vertices[1].tex_coord * v +
                          vertices[2].tex_coord * w;
-             
-    //std::cout << normalize(tex_coord_) << std::endl;
-
-    //tex_coord_ = normalize(tex_coord_);
-    // suspicious code
-
-    Color3 texColor =
-    vertices[0].material->texture.sample (tex_coord_) * u +
-    vertices[1].material->texture.sample (tex_coord_) * v +
-    vertices[2].material->texture.sample (tex_coord_) * w;
-    
-    return texColor * (ambient_ + diffuse_);
+    return vertices[0].material->texture.sample (tex_coord_) * u +
+           vertices[1].material->texture.sample (tex_coord_) * v +
+           vertices[2].material->texture.sample (tex_coord_) * w;
 }
 } /* _462 */

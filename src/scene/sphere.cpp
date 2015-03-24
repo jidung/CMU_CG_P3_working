@@ -149,12 +149,10 @@ bool Sphere::intersect(const Ray& r, real_t& t) {
         return true;
 }
 
-Vector3 Sphere::computeNormal (const Vector3& hitPos) {
-    Vector3 normal = hitPos - position;
+Vector3 Sphere::getNormal (const Vector3& hitPos) {
+    normal = hitPos - position;
     normal = normMat * normal;
-    normal = normalize(normal);
-
-    return normal;
+    return normalize(normal);
 }
 
 Color3 Sphere::getSpecular () {
@@ -165,21 +163,20 @@ real_t Sphere::getRefractionIdx () {
     return material->refractive_index;
 }
 
-Color3 Sphere::computeColor(const Vector3& hitPos) {
+Color3 Sphere::getAmbient() {
+    return material->ambient;
+}
 
-    Color3 ambient_ = material->ambient;
-    Color3 diffuse_ = material->diffuse;
+Color3 Sphere::getDiffuse() {
+    return material->diffuse;
+}
 
-    Vector3 norm_ = hitPos - position;
+Color3 Sphere::getTexColor() {
+    float theta = acos ( this->normal.z / radius );
+    float pi = atan2 ( this->normal.y, this->normal.x );
 
-    float theta = acos ( norm_.z / radius );
-    float pi = atan2 ( norm_.y, norm_.x );
-
-    Vector2 tex_coord_ ( (pi / (2.0 * PI) ), (PI - theta) / PI);
-
-    Color3 texColor = material->texture.sample (tex_coord_);
-
-    return texColor * (ambient_ + diffuse_) ;
+    Vector2 tex_coord ( (pi / (2.0 * PI) ), (PI - theta) / PI);
+    return material->texture.sample (tex_coord);
 }
 } /* _462 */
 
