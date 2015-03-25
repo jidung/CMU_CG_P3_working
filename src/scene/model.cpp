@@ -38,7 +38,7 @@ bool Model::initialize(){
 }
 
 // added by m.ji
-bool Model::intersect(const Ray& r, real_t& t_out) {
+bool Model::intersect(const Ray& r, real_t& t_out, Intersection& inter) {
    
     real_t tempT = 999999.;
     bool hit = false;
@@ -46,6 +46,7 @@ bool Model::intersect(const Ray& r, real_t& t_out) {
     const MeshVertex* vertices = mesh->get_vertices(); 
 
     float u_temp, v_temp, w_temp;
+    float u, v, w; // for barycentric coord calculation
 
     for (unsigned int i = 0; i < mesh->num_triangles(); ++i) {
         
@@ -107,56 +108,42 @@ bool Model::intersect(const Ray& r, real_t& t_out) {
             v_temp = v / n_len_sqr;
             w_temp = w / n_len_sqr;
             u_temp = 1 - v_temp - w_temp;
-            hitTriangle = triangles[i]; 
+            inter.hitTriangle = triangles[i]; 
         }
     }
 
     if (hit) {
         t_out = tempT - EPS;
+        inter.bary.x = u_temp;
+        inter.bary.y = v_temp;
+        inter.bary.z = w_temp;
+
         u = u_temp;
         v = v_temp;
         w = w_temp;
-
         return true;
     }
     else
         return false;
 }
 
-// hitPos is not used but there for sphere normal calculation
-Vector3 Model::getNormal (const Vector3& hitPos) {
+void Model::getPositionInfo (Intersection& inter) {
     const MeshVertex* vertices = mesh->get_vertices(); 
-    Vector3 normal = vertices[hitTriangle.vertices[0]].normal * u +
-                     vertices[hitTriangle.vertices[1]].normal * v +
-                     vertices[hitTriangle.vertices[2]].normal * w;
+    Vector3 normal = vertices[inter.hitTriangle.vertices[0]].normal * inter.bary.x +
+                     vertices[inter.hitTriangle.vertices[1]].normal * inter.bary.y +
+                     vertices[inter.hitTriangle.vertices[2]].normal * inter.bary.z;
     //return normalize(normMat * normal); already normalized?
-    return normMat * normal;
-}
+    inter.normal = normMat * normal;
+    inter.ambient = material->ambient;
+    inter.nt = material->refractive_index;
+    inter.specular = material->specular;
+    inter.diffuse = material->diffuse;
 
-Color3 Model::getSpecular () {
-    return material->specular;
-}
-
-real_t Model::getRefractionIdx () {
-    return material->refractive_index;
-}
-
-Color3 Model::getAmbient() {
-    return material->ambient;
-}
-
-Color3 Model::getDiffuse() {
-    return material->diffuse;
-}
-
-Color3 Model::getTexColor() {
-    const MeshVertex* vertices = mesh->get_vertices(); 
-    Vector2 tex_coord_ = vertices[hitTriangle.vertices[0]].tex_coord * u +
-                         vertices[hitTriangle.vertices[1]].tex_coord * v +
-                         vertices[hitTriangle.vertices[2]].tex_coord * w;
+    Vector2 tex_coord_ = vertices[inter.hitTriangle.vertices[0]].tex_coord * inter.bary.x +
+                         vertices[inter.hitTriangle.vertices[1]].tex_coord * inter.bary.y +
+                         vertices[inter.hitTriangle.vertices[2]].tex_coord * inter.bary.z;
              
-    //tex_coord_ = normalize(tex_coord_);
-    return material->texture.sample (tex_coord_);    
+    inter.texture = material->texture.sample (tex_coord_);    
 }
 
 } /* _462 */

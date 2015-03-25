@@ -58,7 +58,6 @@ bool Texture::load(){
 Color3 Texture::sample(Vector2 coord) const{
 
     return get_texture_pixel (coord.x * width, coord.y * height);
-    //return get_texture_pixel (1, height -1);
     
     // original code
     //assert(false);

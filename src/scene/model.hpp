@@ -31,16 +31,8 @@ public:
     virtual void render() const;
     virtual bool initialize();
 
-    bool intersect(const Ray& r, real_t& t); // overrided from Geometry. m.ji
-    Vector3 getNormal(const Vector3& hitPos);  // these are overrided from Geometry class. m.ji   
-    Color3 getSpecular();     
-    real_t getRefractionIdx();    
-    Color3 getAmbient();
-    Color3 getDiffuse();
-    Color3 getTexColor();
-    
-    float u, v, w; // for barycentric coord calculation
-    MeshTriangle hitTriangle;
+    bool intersect(const Ray& r, real_t& t, Intersection& inter); // overrided from Geometry. m.ji
+    void getPositionInfo (Intersection& inter);
 };
 
 

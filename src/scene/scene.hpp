@@ -28,7 +28,13 @@ struct Intersection{
 
     Vector3 hitPos;
     Vector3 normal;
-
+    real_t nt;                  // objects' refractive index
+    Color3 ambient;
+    Color3 specular;
+    Color3 texture;
+    Color3 diffuse;
+    Vector3 bary;               // for barycentric coordinate interpolation
+    MeshTriangle hitTriangle;   // for model objects
 };
 
 //typedef struct Intersection Intersection;
@@ -71,15 +77,10 @@ public:
     virtual bool initialize();
 
     // added by m.ji
-    virtual bool intersect(const Ray& r, real_t& t) = 0;
-    virtual Vector3 getNormal(const Vector3& hitPos) = 0;
-    virtual Color3 getSpecular() = 0;   
-    virtual real_t getRefractionIdx() = 0;   
-    virtual Color3 getAmbient() = 0;
-    virtual Color3 getDiffuse() = 0;
-    virtual Color3 getTexColor() = 0;
+    virtual bool intersect(const Ray& r, real_t& t, Intersection& inter) = 0;
+    virtual void getPositionInfo(Intersection& inter) = 0;
    
-    Vector3 normal; // exclusively for sphere texture coordinate calculation
+    //Vector3 normal; // exclusively for sphere texture coordinate calculation
 };
 
 

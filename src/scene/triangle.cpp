@@ -66,9 +66,11 @@ void Triangle::render() const
 }
 
 // added by m.ji
-bool Triangle::intersect(const Ray& r, real_t& t_out) {
+bool Triangle::intersect(const Ray& r, real_t& t_out, Intersection& inter) {
    
     //std::cout << orientation << std::endl;
+    
+    float u, v, w;
 
     Vector3 vA = vertices[0].position;
     Vector3 vB = vertices[1].position;
@@ -124,10 +126,13 @@ bool Triangle::intersect(const Ray& r, real_t& t_out) {
 
     // n squared length for barycentric coord calculation
     float n_len_sqr = dot (n,n);
+    inter.bary.y = v / n_len_sqr;
+    inter.bary.z = w / n_len_sqr;
+    inter.bary.x = 1 - inter.bary.y - inter.bary.z;
+    
     v = v / n_len_sqr;
     w = w / n_len_sqr;
     u = 1 - v - w;
-    
     // update time t  
     // epsilon can be computed better with normal in direct illumination?
     // also this might not work well with refractions?
@@ -136,46 +141,33 @@ bool Triangle::intersect(const Ray& r, real_t& t_out) {
     return true;
 }
 
-// hitPos is not used but there for sphere's getNormal
-Vector3 Triangle::getNormal (const Vector3& hitPos) {
+void Triangle::getPositionInfo (Intersection& inter) {
+    inter.normal = vertices[0].normal * inter.bary.x +
+                   vertices[1].normal * inter.bary.y +
+                   vertices[2].normal * inter.bary.z;
 
-    Vector3 normal = vertices[0].normal * u +
-            vertices[1].normal * v +
-            vertices[2].normal * w;
+    inter.ambient = vertices[0].material->ambient * inter.bary.x +
+                    vertices[1].material->ambient * inter.bary.y +
+                    vertices[2].material->ambient * inter.bary.z;
 
-    return normMat * normal;
-}
+    inter.nt = vertices[0].material->refractive_index * inter.bary.x +
+               vertices[1].material->refractive_index * inter.bary.y +
+               vertices[2].material->refractive_index * inter.bary.z;
 
-Color3 Triangle::getSpecular () {
-    return vertices[0].material->specular * u +
-           vertices[1].material->specular * v +
-           vertices[2].material->specular * w;
-}
-    
-real_t Triangle::getRefractionIdx () {
-    return vertices[0].material->refractive_index * u +
-           vertices[1].material->refractive_index * v +
-           vertices[2].material->refractive_index * w;
-}
+    inter.specular = vertices[0].material->specular * inter.bary.x +
+                     vertices[1].material->specular * inter.bary.y +
+                     vertices[2].material->specular * inter.bary.z;
 
-Color3 Triangle::getAmbient() {
-    return  vertices[0].material->ambient * u +
-            vertices[1].material->ambient * v +
-            vertices[2].material->ambient * w;
-}
+    inter.diffuse = vertices[0].material->diffuse * inter.bary.x +
+                     vertices[1].material->diffuse * inter.bary.y +
+                     vertices[2].material->diffuse * inter.bary.z;
 
-Color3 Triangle::getDiffuse() {
-    return vertices[0].material->diffuse * u +
-           vertices[1].material->diffuse * v +
-           vertices[2].material->diffuse * w;
-}
-
-Color3 Triangle::getTexColor() {
-    Vector2 tex_coord_ = vertices[0].tex_coord * u +
-                         vertices[1].tex_coord * v +
-                         vertices[2].tex_coord * w;
-    return vertices[0].material->texture.sample (tex_coord_) * u +
-           vertices[1].material->texture.sample (tex_coord_) * v +
-           vertices[2].material->texture.sample (tex_coord_) * w;
+    Vector2 tex_coord_ = vertices[0].tex_coord * inter.bary.x +
+                         vertices[1].tex_coord * inter.bary.y +
+                         vertices[2].tex_coord * inter.bary.z;
+    inter.texture = 
+           vertices[0].material->texture.sample (tex_coord_) * inter.bary.x +
+           vertices[1].material->texture.sample (tex_coord_) * inter.bary.y +
+           vertices[2].material->texture.sample (tex_coord_) * inter.bary.z;
 }
 } /* _462 */

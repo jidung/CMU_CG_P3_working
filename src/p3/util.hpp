@@ -12,12 +12,12 @@
 namespace _462 {
 
 // max number of threads OpenMP can use. Change this if you like. (Hint: set to 1 for debugging)
-#define MAX_THREADS 1
-//#define MAX_THREADS 4
+//#define MAX_THREADS 1
+#define MAX_THREADS 4
     
 //maximum depth of the recursive (sampling) tracing
-#define MAX_DEPTH 10
-//#define MAX_DEPTH 3
+//#define MAX_DEPTH 10
+#define MAX_DEPTH 5
     
 //increase lighting by a factor
 #define WATT_BOOST 10.0
@@ -31,8 +31,6 @@ namespace _462 {
 //the ``k'' in k-nearest-neighbors. The number of photons used in each radiance estimate
 #define PHOTON_SAMPLE_COUNT 0
 
-
-    
 //the number of samples used in the direct (shadow) estimate
 #define DIRECT_SAMPLE_COUNT 10
 

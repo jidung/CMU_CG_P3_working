@@ -50,8 +50,6 @@ bool Raytracer::initialize(Scene* scene, size_t num_samples,
 {
     this->scene = scene;
     this->num_samples = num_samples;
-
-    this->num_samples = 5; // temp code. jd
     this->width = width;
     this->height = height;
 
@@ -94,7 +92,7 @@ Color3 Raytracer::trace_ray(Ray &ray, const unsigned int &depth/*maybe some more
             newRay = ray.translate (geometries[i]->invMat);
 
             // ray hit object in the object's local space
-            if ( geometries[i]->intersect (newRay, interTime) ) {
+            if ( geometries[i]->intersect (newRay, interTime, intersection) ) {
                 if (minInterTime > interTime) {
                     hit = true;
                     minInterTime = interTime;
@@ -105,105 +103,94 @@ Color3 Raytracer::trace_ray(Ray &ray, const unsigned int &depth/*maybe some more
 
         if (hit) {
             intersection.hitPos = ray.atTime(minInterTime);
-            intersection.normal = geometries[hitGeometryIdx]->getNormal (intersection.hitPos); 
+            //intersection.normal = geometries[hitGeometryIdx]->getNormal (intersection.hitPos); 
             //intersection.normal = normalize(intersection.normal); 
 
             real_t n = scene->refractive_index;
-            real_t nt = geometries[hitGeometryIdx]->getRefractionIdx();
-            
-            // should be before shadow rays because intersec() will change member variables of geometries that used for barycentric coord interpolation
-            Color3 ambient = geometries[hitGeometryIdx]->getAmbient() * scene->ambient_light;
-            Color3 specular = geometries[hitGeometryIdx]->getSpecular();
-            Color3 texture = geometries[hitGeometryIdx]->getTexColor();
-            Color3 diffuseKd = geometries[hitGeometryIdx]->getDiffuse();
-            Color3 diffuse(0, 0, 0);
+            geometries[hitGeometryIdx]->getPositionInfo(intersection);
+            real_t nt = intersection.nt;
+            Color3 ambient = intersection.ambient * scene->ambient_light;
+            Color3 specular = intersection.specular;
+            Color3 texture = intersection.texture;
+            Color3 diffuseKd = intersection.diffuse;
+            Color3 diffuseSum(0, 0, 0);
 
-            // diffuse object?
-            if ( specular.isBlack() ) {
-              
-                // Shadow rays
-                for (unsigned int i = 0; i < scene->num_lights(); ++i) {
-                    Ray rayToLight;
+            // for surface color calculation
 
-                    real_t light_x, light_y, light_z;
-                    light_x = random_gaussian();
-                    light_y = random_gaussian();
-                    light_z = random_gaussian();
+            // Shadow rays
+            for (unsigned int i = 0; i < scene->num_lights(); ++i) {
+                Ray rayToLight;
 
-                    Vector3 light_position = 
-                        ( 1.0 / sqrt ( light_x * light_x 
-                                     + light_y * light_y 
-                                     + light_z * light_z ) ) 
-                        * Vector3 (light_x, light_y, light_z);
+                real_t light_x, light_y, light_z;
+                light_x = random_gaussian();
+                light_y = random_gaussian();
+                light_z = random_gaussian();
 
-                    light_position *= lights[i].radius;
-                    light_position += lights[i].position;
-                    
-                    rayToLight.e = intersection.hitPos + intersection.normal * EPS;
-                    rayToLight.d = light_position - rayToLight.e;
+                Vector3 light_position = 
+                    ( 1.0 / sqrt ( light_x * light_x 
+                                   + light_y * light_y 
+                                   + light_z * light_z ) ) 
+                    * Vector3 (light_x, light_y, light_z);
 
-                    real_t distanceToLight = length(rayToLight.d);
-                    rayToLight.d = normalize(rayToLight.d);
+                light_position *= lights[i].radius;
+                light_position += lights[i].position;
 
-                    for (unsigned int j = 0; j < scene->num_geometries(); ++j) {
-                        newRay = rayToLight.translate (geometries[j]->invMat);
+                rayToLight.e = intersection.hitPos + intersection.normal * EPS;
+                rayToLight.d = light_position - rayToLight.e;
 
-                        // ray hit object in the object's local space
-                        if ( geometries[j]->intersect (newRay, shadowInterTime) ) {
-                            //std::cout << timeToRay << std::endl;
-                            if (shadowInterTime < distanceToLight)
-                                return Color3::Black();
-                                //color = Color3::Black();
+                real_t distanceToLight = length(rayToLight.d);
+                rayToLight.d = normalize(rayToLight.d);
+
+                for (unsigned int j = 0; j < scene->num_geometries(); ++j) {
+                    newRay = rayToLight.translate (geometries[j]->invMat);
+                    Intersection dummy;
+                    // ray hit object in the object's local space
+                    if ( geometries[j]->intersect (newRay, shadowInterTime, dummy) ) {
+                        //std::cout << timeToRay << std::endl;
+                        if (shadowInterTime < distanceToLight) {
+                            diffuseKd = Color3::Black();
                         }
                     }
-                    
-                    //this shadow ray doesn't hit any objects
-                    Color3 ci = lights[i].color 
-                        * ( 1.0 / (lights[i].attenuation.constant           
-                           + distanceToLight*lights[i].attenuation.linear 
-                           + distanceToLight*distanceToLight*lights[i].attenuation.quadratic) ); 
-                    diffuse += ci * diffuseKd * std::max( dot(intersection.normal, rayToLight.d), (real_t)0 );
-                }// end of lights loop
-            
-                color = texture * (ambient + diffuse);
-            }// end of diffuse objects
-            
+                }
+
+                //this shadow ray doesn't hit any objects
+                Color3 ci = lights[i].color 
+                    * ( 1.0 / (lights[i].attenuation.constant           
+                                + distanceToLight*lights[i].attenuation.linear 
+                                + distanceToLight*distanceToLight*lights[i].attenuation.quadratic) ); 
+                diffuseSum += ci * diffuseKd * std::max( dot(intersection.normal, rayToLight.d), (real_t)0 );
+
+            }// end of lights loop
+
+            color = texture * (ambient + diffuseSum);
+
             Color3 k;                       // attenuation. not used
             Color3 a (0.0, 0.0, 0.0);       // attenuation. not used
-            float fresnel;
+            real_t fresnel = 1.0;
 
             // reflection and / or refraction
             if ( !specular.isBlack() )   
             { // should be fixed
 
                 Ray reflectRay;
-                reflectRay = ray.reflect (intersection.hitPos + intersection.normal * EPS, intersection.normal);
-                reflectionColor = trace_ray (reflectRay, depth + 1) * specular;
-
                 Ray refractRay;
-
+                Ray reverseRefractRay;
+                reflectRay = ray.reflect (intersection.hitPos + intersection.normal * EPS, intersection.normal);
+                
                 // ray is entering
-                if ( dot (intersection.normal, ray.d) < 0) {
+                if ( dot (intersection.normal, ray.d) < 0 ) {
 
                     Intersection temp = intersection;
-
                     temp.hitPos -= intersection.normal * EPS;
-
-                    if (nt <= 0)
-                        return reflectionColor;
 
                     refractRay.e = temp.hitPos;
                     refractRay.d = refract (intersection.normal, ray.d, n / nt);
-                    //std::cout << refractRay.d << std::endl;
-                    
-                    k = Color3::White();
+
+                    //k = Color3::White();
 
                     fresnel = computeFresnelCoefficient (temp, ray, n, nt);
-
-                    refractionColor = trace_ray (refractRay, depth + 1);
-                    //std::cout << fresnel << std::endl;
                 } 
-                else // ray is exiting
+                else if (dot (intersection.normal, ray.d) >= 0)// ray is exiting
                 {
                     k.r = exp(-a.r * minInterTime);
                     k.g = exp(-a.g * minInterTime);
@@ -213,44 +200,40 @@ Color3 Raytracer::trace_ray(Ray &ray, const unsigned int &depth/*maybe some more
 
                     temp.hitPos += intersection.normal * EPS;
 
-                    if (nt <= 0)
-                        return reflectionColor;
-
                     refractRay.e = temp.hitPos;
                     refractRay.d = refract (-intersection.normal, ray.d, nt / n);
 
-                    Ray reverseRefractRay;
                     reverseRefractRay.e = refractRay.e;
-                    reverseRefractRay.d = -refractRay.d;
 
-                    if (refractRay.d.x == refractRay.d.x) {
+                    if (refractRay.d != Vector3::Zero()) {
+                        reverseRefractRay.d = -refractRay.d;
                         fresnel = computeFresnelCoefficient (intersection, reverseRefractRay, n, nt);
-                        //std::cout << "n: " << n << " nt: " << nt << " fresnel: " << fresnel << std::endl;
                     } else  { // total internal reflection
-                        //std::cout << "Total Internal Reflection" << std::endl;
-                        fresnel = 1.0f;
+                        return  ( trace_ray (reflectRay, depth + 1)) * specular * texture;
                     }
-                    refractionColor = trace_ray (refractRay, depth + 1);
                 }
-            
-                color = (fresnel * reflectionColor) + ((1.0 - fresnel) * refractionColor);
-            }// end of dielectric
-            //color = color + (reflectionColor + refractionColor) * k;
-            //color = color + (reflectionColor);
+
+                /* 
+                   if (fresnel >= 0.5)
+                   color += fresnel * trace_ray (reflectRay, depth + 1) * specular * texture;
+                   else
+                   color = (1.0 - fresnel) * trace_ray (refractRay, depth + 1);
+                   return color;
+                 */
+                    reflectionColor = ( trace_ray (reflectRay, depth + 1)) * specular * texture;
+
+                    if (nt > 0) // dielectric objects
+                    {                
+                        refractionColor = trace_ray (refractRay, depth + 1);
+                        return (fresnel * reflectionColor) + ((1.0 - fresnel) * refractionColor);
+                    }
+                    else
+                        return color + reflectionColor;
+            }// end isSpecular
         } else // not hit
             color = scene->background_color;
-
     } 
-    
-// for debugging. jd
-//#define NORMAL_SHADING
-#ifdef NORMAL_SHADING            
-    color.r = fabs(intersection.normal.x);
-    color.g = fabs(intersection.normal.y);
-    color.b = fabs(intersection.normal.z);
-#endif
 
-    //return color + scene->ambient_light;
     return color;
 
     // original code
@@ -316,7 +299,6 @@ Color3 Raytracer::trace_pixel(size_t x,
  */
 bool Raytracer::raytrace(unsigned char* buffer, real_t* max_time)
 {
-    
     static const size_t PRINT_INTERVAL = 64;
 
     // the time in milliseconds that we should stop

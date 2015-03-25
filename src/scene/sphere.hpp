@@ -26,13 +26,8 @@ public:
     Sphere();
     virtual ~Sphere();
     virtual void render() const;
-    bool intersect(const Ray& r, real_t& t);    // overrided from Geometry. added by m.ji
-    Vector3 getNormal(const Vector3& hitPos);  // these are overrided from Geometry class. m.ji   
-    Color3 getSpecular();     
-    real_t getRefractionIdx();    
-    Color3 getAmbient();
-    Color3 getDiffuse();
-    Color3 getTexColor();
+    bool intersect(const Ray& r, real_t& t, Intersection& inter);    // overrided from Geometry. added by m.ji
+    void getPositionInfo (Intersection& inter);
 };
 
 } /* _462 */
