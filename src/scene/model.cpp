@@ -46,7 +46,8 @@ bool Model::intersect(const Ray& r, real_t& t_out, Intersection& inter) {
     const MeshVertex* vertices = mesh->get_vertices(); 
 
     float u_temp, v_temp, w_temp;
-    float u, v, w; // for barycentric coord calculation
+    float v, w; // for barycentric coord calculation
+    unsigned int hitTriangleIdx = 0;
 
     for (unsigned int i = 0; i < mesh->num_triangles(); ++i) {
         
@@ -67,13 +68,11 @@ bool Model::intersect(const Ray& r, real_t& t_out, Intersection& inter) {
 
         float d = - dot(n, vA); // d of plane equation. TODO: this can be precomputed later
         float t = - (dot(n, r.e) + d) / nDotRay; // t of point p equation
-        //float t = -(dot(n, Vector3 (0,0,0)) + d) / nDotRay; // t of point p equation
         if (t < 0)
             continue;
 
         // calculate intersection point p with the plane
         Vector3 p = r.e + t * r.d;
-        // Vector3 p = t * r.d;
 
         /////////////////////
         // Testing p is in //
@@ -99,28 +98,31 @@ bool Model::intersect(const Ray& r, real_t& t_out, Intersection& inter) {
         if (v < 0)
             continue;   // p is outside of the triangle
 
-        if (tempT > t) {
+        // ray hits this triangle. find closest one
+        if (tempT > t) 
+        {
             tempT = t;
-
             hit = true;
-            // n squared length for barycentric coord calculation
+            
+            // barycentric coord calculation.
             float n_len_sqr = dot (n,n);
             v_temp = v / n_len_sqr;
             w_temp = w / n_len_sqr;
             u_temp = 1 - v_temp - w_temp;
-            inter.hitTriangle = triangles[i]; 
+            
+            // preserve closest triangle
+            hitTriangleIdx = i;
+            hitTriangle = triangles[i];
+            inter.hitTriangle = triangles[i];
         }
     }
 
     if (hit) {
-        t_out = tempT - EPS;
+        t_out = tempT;
         inter.bary.x = u_temp;
         inter.bary.y = v_temp;
         inter.bary.z = w_temp;
-
-        u = u_temp;
-        v = v_temp;
-        w = w_temp;
+        inter.hitTriangle = triangles[hitTriangleIdx];
         return true;
     }
     else
@@ -132,16 +134,17 @@ void Model::getPositionInfo (Intersection& inter) {
     Vector3 normal = vertices[inter.hitTriangle.vertices[0]].normal * inter.bary.x +
                      vertices[inter.hitTriangle.vertices[1]].normal * inter.bary.y +
                      vertices[inter.hitTriangle.vertices[2]].normal * inter.bary.z;
-    //return normalize(normMat * normal); already normalized?
-    inter.normal = normMat * normal;
+
+    inter.normal = normalize(normMat * normal); //must normalize after applying normaMat if there was scaling
     inter.ambient = material->ambient;
     inter.nt = material->refractive_index;
     inter.specular = material->specular;
     inter.diffuse = material->diffuse;
 
-    Vector2 tex_coord_ = vertices[inter.hitTriangle.vertices[0]].tex_coord * inter.bary.x +
-                         vertices[inter.hitTriangle.vertices[1]].tex_coord * inter.bary.y +
-                         vertices[inter.hitTriangle.vertices[2]].tex_coord * inter.bary.z;
+    Vector2 tex_coord_ = 
+        vertices[inter.hitTriangle.vertices[0]].tex_coord * inter.bary.x 
+        + vertices[inter.hitTriangle.vertices[1]].tex_coord * inter.bary.y 
+        + vertices[inter.hitTriangle.vertices[2]].tex_coord * inter.bary.z;
              
     inter.texture = material->texture.sample (tex_coord_);    
 }

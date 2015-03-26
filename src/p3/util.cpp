@@ -21,7 +21,6 @@ real_t computeFresnelCoefficient(Intersection &next, Ray &ray, real_t index, rea
 }
 
 Vector3 refract(Vector3 norm, Vector3 inc, real_t ratio) {
-
     Vector3 refractionRay;
     real_t dotProduct = dot (inc, norm);
     real_t underSqrt = 1.0 - ratio * ratio * (1.0 - dotProduct*dotProduct);

@@ -138,7 +138,7 @@ bool Sphere::intersect(const Ray& r, real_t& t, Intersection& inter) {
     real_t b;
     real_t c;
         
-    //L = r.e - position;
+    //L = r.e - invMat.transform_point(position);
     L = r.e;    // do it in local space
     b = 2.0 * dot(r.d, L);
     c = dot(L, L) - radius * radius;

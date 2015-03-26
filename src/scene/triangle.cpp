@@ -68,8 +68,6 @@ void Triangle::render() const
 // added by m.ji
 bool Triangle::intersect(const Ray& r, real_t& t_out, Intersection& inter) {
    
-    //std::cout << orientation << std::endl;
-    
     float u, v, w;
 
     Vector3 vA = vertices[0].position;
@@ -96,7 +94,6 @@ bool Triangle::intersect(const Ray& r, real_t& t_out, Intersection& inter) {
     
     // calculate intersection point p with the plane
     Vector3 p = r.e + t * r.d;
-    // Vector3 p = t * r.d;
 
     /////////////////////
     // Testing p is in //
@@ -124,7 +121,7 @@ bool Triangle::intersect(const Ray& r, real_t& t_out, Intersection& inter) {
 
     // ray intersects this triangle
 
-    // n squared length for barycentric coord calculation
+    // barycentric coordinate calculation
     float n_len_sqr = dot (n,n);
     inter.bary.y = v / n_len_sqr;
     inter.bary.z = w / n_len_sqr;
@@ -136,8 +133,8 @@ bool Triangle::intersect(const Ray& r, real_t& t_out, Intersection& inter) {
     // update time t  
     // epsilon can be computed better with normal in direct illumination?
     // also this might not work well with refractions?
-    //t_out = t - EPS;    
-    t_out = t;    
+    t_out = t - EPS;    
+    //t_out = t;    
     return true;
 }
 
@@ -145,6 +142,7 @@ void Triangle::getPositionInfo (Intersection& inter) {
     inter.normal = vertices[0].normal * inter.bary.x +
                    vertices[1].normal * inter.bary.y +
                    vertices[2].normal * inter.bary.z;
+    inter.normal = normalize(normMat * inter.normal);
 
     inter.ambient = vertices[0].material->ambient * inter.bary.x +
                     vertices[1].material->ambient * inter.bary.y +
