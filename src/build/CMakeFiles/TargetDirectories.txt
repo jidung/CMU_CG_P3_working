@@ -1,0 +1,5 @@
+/home/jd/Desktop/p3/src/build/application/CMakeFiles/application.dir
+/home/jd/Desktop/p3/src/build/math/CMakeFiles/math.dir
+/home/jd/Desktop/p3/src/build/p3/CMakeFiles/p3.dir
+/home/jd/Desktop/p3/src/build/scene/CMakeFiles/scene.dir
+/home/jd/Desktop/p3/src/build/tinyxml/CMakeFiles/tinyxml.dir
