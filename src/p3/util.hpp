@@ -12,12 +12,12 @@
 namespace _462 {
 
 // max number of threads OpenMP can use. Change this if you like. (Hint: set to 1 for debugging)
-#define MAX_THREADS 1
-//#define MAX_THREADS 4
+//#define MAX_THREADS 1
+#define MAX_THREADS 4
     
 //maximum depth of the recursive (sampling) tracing
-//#define MAX_DEPTH 10
-#define MAX_DEPTH 4
+#define MAX_DEPTH 10
+//#define MAX_DEPTH 1
     
 //increase lighting by a factor
 #define WATT_BOOST 10.0

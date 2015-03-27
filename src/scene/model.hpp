@@ -33,7 +33,6 @@ public:
 
     bool intersect(const Ray& r, real_t& t, Intersection& inter); // overrided from Geometry. m.ji
     void getPositionInfo (Intersection& inter);
-    MeshTriangle hitTriangle;
 };
 
 

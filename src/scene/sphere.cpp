@@ -138,27 +138,30 @@ bool Sphere::intersect(const Ray& r, real_t& t, Intersection& inter) {
     real_t b;
     real_t c;
         
-    //L = r.e - invMat.transform_point(position);
-    L = r.e;    // do it in local space
+    L = r.e - invMat.transform_point(position);
+    //L = r.e;    // do it in local space
     b = 2.0 * dot(r.d, L);
     c = dot(L, L) - radius * radius;
     t = solve_time(a, b, c); 
+    
     if ( t == -1 ) {
         return false;
-    } else 
+    } else {
         return true;
+    }
 }
 
 void Sphere::getPositionInfo (Intersection& inter) {
-    //inter.normal = normalize (normMat * (inter.hitPos - position));
-    inter.normal = normalize (inter.hitPos - position);
+    inter.normal = normalize (normMat * invMat.transform_point(inter.hitPos));
     inter.ambient = material->ambient;
     inter.specular = material->specular;
     inter.diffuse = material->diffuse;
     inter.nt = material->refractive_index;
 
-    float theta = acos ( inter.normal.z / radius );
-    float pi = atan2 ( inter.normal.y, inter.normal.x );
+    // hitPos is normal when position is (0, 0, 0)
+    Vector3 localNormal = (inter.hitPos - position);
+    real_t theta = acos ( localNormal.z / radius );
+    real_t pi = atan2 ( localNormal.y, localNormal.x );
 
     Vector2 tex_coord ( (pi / (2.0 * PI) ), (PI - theta) / PI);
     inter.texture = material->texture.sample (tex_coord);

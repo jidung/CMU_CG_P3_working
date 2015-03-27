@@ -67,8 +67,9 @@ void Triangle::render() const
 
 // added by m.ji
 bool Triangle::intersect(const Ray& r, real_t& t_out, Intersection& inter) {
-   
-    float u, v, w;
+  
+    // for varycentric coordinates
+    real_t v, w;
 
     Vector3 vA = vertices[0].position;
     Vector3 vB = vertices[1].position;
@@ -82,12 +83,12 @@ bool Triangle::intersect(const Ray& r, real_t& t_out, Intersection& inter) {
     /////////////////////
     // Finding point p //
     /////////////////////
-    float nDotRay = dot(n, r.d);
+    real_t nDotRay = dot(n, r.d);
     if (nDotRay == 0)
         return false;   // they are parallel
 
-    float d = - dot(n, vA); // d of plane equation. TODO: this can be precomputed later
-    float t = - (dot(n, r.e) + d) / nDotRay; // t of point p equation
+    real_t d = - dot(n, vA); // d of plane equation. TODO: this can be precomputed later
+    real_t t = - (dot(n, r.e) + d) / nDotRay; // t of point p equation
     //float t = -(dot(n, Vector3 (0,0,0)) + d) / nDotRay; // t of point p equation
     if (t < 0)
         return false;
@@ -122,19 +123,13 @@ bool Triangle::intersect(const Ray& r, real_t& t_out, Intersection& inter) {
     // ray intersects this triangle
 
     // barycentric coordinate calculation
-    float n_len_sqr = dot (n,n);
+    real_t n_len_sqr = dot (n,n);
     inter.bary.y = v / n_len_sqr;
     inter.bary.z = w / n_len_sqr;
     inter.bary.x = 1 - inter.bary.y - inter.bary.z;
-    
-    v = v / n_len_sqr;
-    w = w / n_len_sqr;
-    u = 1 - v - w;
+
     // update time t  
-    // epsilon can be computed better with normal in direct illumination?
-    // also this might not work well with refractions?
-    t_out = t - EPS;    
-    //t_out = t;    
+    t_out = t;    
     return true;
 }
 

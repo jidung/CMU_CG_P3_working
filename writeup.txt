@@ -1,3 +1,75 @@
-writeup
-minoong ji
+writeup.txt
+----------------------------------------------------------------------
+2015 Spring Computer Graphics Assignment 3
+Minoong Ji (minwongj@andrew.cmu.edu)
+Professor Nancy Pollard
+Carnegie Mellon University
+----------------------------------------------------------------------
+
+
+----------------------------------------------------------------------
+Implemented Features
+----------------------------------------------------------------------
+
+All basic requirements are implemented.
+
+Extra work implemented are:
+- Light attenuation in dielectric objects
+- Russian Roulette sampling
+- Texture sampling
+
+----------------------------------------------------------------------
+Design Decisions
+----------------------------------------------------------------------
+
+Used pre-made std::vector to store vertices and triangle indices to utilize 
+provided structure as much as possible.
+
+Memory Management
+
+1) A struct 'DivideSet' is defined to store information needed to calculate
+odd vertices. This contains an edge and vertexC and vertexD. An edge consists of two 
+vertices, vertexA and vertexB.
+
+2) MeshTriangle struct is modified to hold odd vertices' indices.
+
+3) Triangle vector is resized by four times to store 3 more triangles 
+calculated by first pass. 
+
+4) Each vertices has a neighbor vector which stores its neighbor vertices'
+indices. neighbor vectors' list is built in first pass and used in second 
+pass to calculate even interior vertices.
+
+5) A vector 'evenVertices' is used to preserve vertices before first pass for
+even vertices calculation.
+
+Functions Added
+
+1) Mesh::buildDivideSetList (std::vector <DivideSet> &)
+	Traverse triangles array and construct DivideSet array. For each edges
+	check divideSetList and if there is no DivideSet with the edge, add
+	three vertices of the triangle to the list. Otherwise add fourth
+	vertex (vertex d) to the set. Calls Mesh::compareSetWithEdgeAndFill.
+
+2) Mesh::compareSetWithEdgeAndFill (std::vector <DivideSet> &, DivideSet,
+unsigned int thirdVertex)
+	Checks DivideSet array if there is a set same with the edge of 
+	the DivideSet given. If so add the set to DivideSet array. Otherwise
+	add vertex d to the set found. Called by Mesh::buildDivideSetList().
+
+3) Mesh::addOddVertices (std::vector <DivideSet> &)
+	Using established DivideSet array in previous functions, calculate
+	odd vertices and add them to vertices array. Also constructs neighbors
+	array which is used in Mesh::addEvenVertices(). Calls 
+	Mesh::addOddVertices() to  
+
+4) Mesh::divideTriangles (Edge)
+	Replace triangle to newly added one and adds three new triangles more
+	to the triangles vector.
+
+5) Mesh::addEvenVertices ()
+	Calculates even vertices and replace it with previous vertices using
+	evenVertices array and neighbors list which is constructed in first pass.
+
+
 
